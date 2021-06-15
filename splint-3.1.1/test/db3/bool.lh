@@ -1,0 +1,7 @@
+# include "bool.h"
+
+extern void bool_initMod (void);
+extern /*@observer@*/ char *bool_unparse (bool  /* b */);
+extern bool bool_not (bool  /* b */);
+extern bool bool_equal (bool  /* b1 */, bool  /* b2 */);
+/* Output from Splint 3.1.1 */

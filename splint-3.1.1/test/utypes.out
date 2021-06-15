@@ -1,0 +1,10 @@
+
+utypes.c:16: Include file <sys/types.h> matches the name of a POSIX library,
+    but the POSIX library is not being used.  Consider using +posixlib or
+    +posixstrictlib to select the POSIX library, or -warnposix to suppress this
+    message.
+utypes.c:17:23: Cannot find include file sys/types.h on search path:
+                   /usr/include;/usr/local/include
+Preprocessing error for file: /home/mkx/splint-3.1.1/test/utypes.c
+*** Cannot continue.
+Makefile:1705: recipe for target 'utypes' failed

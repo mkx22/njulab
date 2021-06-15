@@ -1,0 +1,8 @@
+randomNumbers.o: randomNumbers.c /usr/include/stdc-predef.h \
+ Headers/randomNumbers.h Headers/256_random_numbers.nf
+
+/usr/include/stdc-predef.h:
+
+Headers/randomNumbers.h:
+
+Headers/256_random_numbers.nf:

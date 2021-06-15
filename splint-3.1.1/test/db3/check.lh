@@ -1,0 +1,6 @@
+
+# include "bool.h"
+# include "bool.h"
+
+extern /*@noreturnwhenfalse@*/ void check (bool  /* x */);
+/* Output from Splint 3.1.1 */

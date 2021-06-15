@@ -1,0 +1,279 @@
+#include "cpu/cpu.h"
+
+void set_CF_add(uint32_t result, uint32_t src) {
+       	cpu.eflags.CF = result < src;
+}
+ 
+void set_PF(uint32_t result) {
+       	// set according to the low-order 8-bits of the result
+	int i = 0, val = 0;
+	cpu.eflags.PF = 1;
+	for(; i < 8; ++i) {
+		val = result & 0x1;
+		result >>= 1;
+		if(val == 1) {
+			if(cpu.eflags.PF == 1)
+				cpu.eflags.PF = 0;
+			else cpu.eflags.PF = 1;
+		}
+	}
+}
+
+void set_ZF(uint32_t result) {
+       	cpu.eflags.ZF = (result == 0);
+}
+
+void set_SF(uint32_t result) {
+       	cpu.eflags.SF = sign(result);
+}
+
+void set_OF_add(uint32_t result, uint32_t src, uint32_t dest){
+       	if(sign(src) == sign(dest)) {
+	       	if(sign(src) != sign(result))
+		       	cpu.eflags.OF = 1;
+	       	else cpu.eflags.OF = 0;
+       	} else {
+	       	cpu.eflags.OF = 0;
+       	}
+}
+
+//return dest+src
+uint32_t alu_add(uint32_t src, uint32_t dest) {
+	uint32_t res = 0;
+       	res = dest + src;
+	set_CF_add(res, src);
+       	set_PF(res);
+       	// set_AF();
+       	set_ZF(res);
+       	set_SF(res);
+       	set_OF_add(res, src, dest);
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+//return dest+src+CF
+uint32_t alu_adc(uint32_t src, uint32_t dest) {
+	uint32_t res = 0;
+	res = dest + cpu.eflags.CF;
+	set_CF_add(res, cpu.eflags.CF);
+	res += src;
+	if(cpu.eflags.CF == 0)
+		set_CF_add(res, src);
+	set_PF(res);
+	set_ZF(res);
+	set_SF(res);
+	set_OF_add(res, src, dest);
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+//return dest-src
+uint32_t alu_sub(uint32_t src, uint32_t dest) {
+	uint32_t res = 0; 
+	res = dest-src;
+	set_CF_add(dest, src);
+	set_PF(res);
+	set_ZF(res);
+	set_SF(res);
+	set_OF_add(res, -src, dest);
+	return res;
+	
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+//return dest-src-CF
+uint32_t alu_sbb(uint32_t src, uint32_t dest) {
+	uint32_t res = 0;
+	res = dest-cpu.eflags.CF;
+	set_CF_add(dest, cpu.eflags.CF);
+	if(cpu.eflags.CF == 0)
+		set_CF_add(res, src);
+	res -= src;
+	set_PF(res);
+	set_ZF(res);
+	set_SF(res);
+       	set_OF_add(res, -src, dest-1);
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+uint64_t alu_mul(uint32_t src, uint32_t dest, size_t data_size) {
+	//uint32_t res = src*dest;
+		
+	printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	assert(0);
+	return 0;
+}
+
+int64_t alu_imul(int32_t src, int32_t dest, size_t data_size) {
+	printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	assert(0);
+	return 0;
+}
+
+uint32_t alu_div(uint64_t src, uint64_t dest, size_t data_size) {
+	printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	assert(0);
+	return 0;
+}
+
+int32_t alu_idiv(int64_t src, int64_t dest, size_t data_size) {
+	printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	assert(0);
+	return 0;
+}
+
+uint32_t alu_mod(uint64_t src, uint64_t dest) {
+	printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	assert(0);
+	return 0;
+}
+
+int32_t alu_imod(int64_t src, int64_t dest) {
+	printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	assert(0);
+	return 0;
+}
+
+uint32_t alu_and(uint32_t src, uint32_t dest) {
+	uint32_t res = src&dest;	
+	cpu.eflags.CF = 0;
+	set_PF(res);
+	set_ZF(res);
+	set_SF(res);
+	cpu.eflags.OF = 0;
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+uint32_t alu_xor(uint32_t src, uint32_t dest) {
+	uint32_t res = src^dest;
+	cpu.eflags.CF = 0;
+	set_PF(res);
+	set_ZF(res);
+	set_SF(res);
+	cpu.eflags.OF = 0;
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+uint32_t alu_or(uint32_t src, uint32_t dest) {
+	uint32_t res = src|dest;
+	cpu.eflags.CF = 0;
+	set_PF(res);
+	set_ZF(res);
+	set_SF(res);
+	cpu.eflags.OF = 0;
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+uint32_t alu_shl(uint32_t src, uint32_t dest, size_t data_size) {
+	uint32_t dest_l1 = dest, dest_l = dest, dest_h = 0, res = 0;
+	dest_l <<= src;
+	cpu.eflags.SF = (dest_l>>(data_size-1))&0x1;
+	cpu.eflags.CF = (dest_l1>>(data_size-src))&0x1;
+	if(data_size == 8) { 
+		dest_l &= 0xff;
+		dest_l1 &= 0xff;
+	}
+	else if(data_size == 16) {
+		dest_l &= 0xffff;
+		dest_l1 &= 0xffff;
+	}
+	dest_h = dest-dest_l1;
+	set_PF(dest_l);
+	set_ZF(dest_l);
+	res = dest_h+dest_l;
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size) {
+	uint32_t dest_l = dest, dest_h = 0, res = 0;
+	cpu.eflags.SF = 0;
+	cpu.eflags.CF = (dest>>(src-1))&0x1;
+	if(data_size == 8) 
+		dest_l &= 0xff;
+	else if(data_size == 16) 
+		dest_l &= 0xffff;
+	dest_h = dest-dest_l;
+	dest_l >>= src;
+	set_PF(dest_l);
+	set_ZF(dest_l);
+	res = dest_h+dest_l;
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+uint32_t alu_sar(uint32_t src, uint32_t dest, size_t data_size) {
+	uint32_t dest_l = dest, dest_h = 0, res = 0;
+	cpu.eflags.CF = (dest>>(src-1))&0x1;
+	if(data_size == 8) 
+		dest_l &= 0xff;
+	else if(data_size == 16) 
+		dest_l &= 0xffff;
+	cpu.eflags.SF = (dest_l>>(data_size-1))&0x1;
+	dest_h = dest-dest_l;
+	dest_l >>= src;
+	if(cpu.eflags.SF == 1) 
+		dest_l += 0xffffffff>>(32-src)<<(data_size-src);
+	set_PF(dest_l);
+	set_ZF(dest_l);
+	res = dest_h+dest_l;
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}
+
+uint32_t alu_sal(uint32_t src, uint32_t dest, size_t data_size) {
+	uint32_t dest_l1 = dest, dest_l = dest, dest_h = 0, res = 0;
+	dest_l <<= src;
+	cpu.eflags.SF = (dest_l>>(data_size-1))&0x1;
+	cpu.eflags.CF = (dest_l1>>(data_size-src))&0x1;
+	if(data_size == 8) { 
+		dest_l &= 0xff;
+		dest_l1 &= 0xff;
+	}
+	else if(data_size == 16) {
+		dest_l &= 0xffff;
+		dest_l1 &= 0xffff;
+	}
+	dest_h = dest-dest_l1;
+	set_PF(dest_l);
+	set_ZF(dest_l);
+	res = dest_h+dest_l;
+	return res;
+
+	//printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
+	//assert(0);
+	//return 0;
+}

@@ -1,0 +1,6 @@
+# include "bool.h"
+
+
+extern /*@only@*/ mut mut_create (void);
+extern void mut_mod (mut  /* a */);
+/* Output from Splint 3.1.1 */
